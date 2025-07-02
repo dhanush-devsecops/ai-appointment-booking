@@ -1,0 +1,27 @@
+# Ignore virtual environment
+venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# Environment variables
+.env
+
+# OS files
+.DS_Store
+
+# IDE folders
+.vscode/
+
+# Media files
+*.mp3
+*.mp4
+
+# Archives
+*.zip
+*.tar.gz
+
+# Logs and DBs
+*.log
+*.sqlite3
