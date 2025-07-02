@@ -1,34 +1,37 @@
 import os
 import streamlit as st
+from groq import Groq
 from dotenv import load_dotenv
-import google.generativeai as genai
 
-# Load environment variables
+# Load API key from .env (optional but good practice)
 load_dotenv()
-api_key = os.getenv("GEMINI_API_KEY")
 
-# Check if API key exists
-if not api_key:
-    st.error("❌ GEMINI_API_KEY not found in .env file")
-    st.stop()
-
-# Configure Gemini
-genai.configure(api_key=api_key)
-
-# Initialize Gemini model
-model = genai.GenerativeModel(model_name="models/gemini-pro")
+# You can also directly use your API key here
+api_key = os.getenv("GROQ_API_KEY") 
+# Initialize GROQ client
+client = Groq(api_key=api_key)
 
 # Streamlit UI
-st.title("🤖 AI Appointment Booking Assistant (Gemini)")
-st.write("📅 Book an appointment using natural language.")
+st.set_page_config(page_title="🧠 AI Appointment Booking Assistant", page_icon="📅")
+st.title("📅 AI Appointment Booking Assistant")
+st.write("Book appointments using natural language with GROQ Mixtral AI.")
 
-prompt = st.text_input("🗓️ What would you like to book? (e.g., July 5 at 10AM)")
+# User input
+prompt = st.text_input("🗓️ What would you like to book? (e.g., 'Book meeting with John on July 5 at 10 AM')")
 
+# Response
 if prompt:
-    try:
-        response = model.generate_content(prompt)
-        st.success("✅ Appointment Suggestion:")
-        st.write(response.text)
-    except Exception as e:
-        st.error(f"❌ Gemini error: {e}")
+    with st.spinner("Thinking..."):
+        try:
+            chat_completion = client.chat.completions.create(
+                model="llama3-8b-8192",
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant that helps users schedule appointments."},
+                    {"role": "user", "content": prompt},
+                ]
+            )
+            st.success("✅ AI Response:")
+            st.write(chat_completion.choices[0].message.content)
+        except Exception as e:
+            st.error(f"❌ Error: {e}")
 
