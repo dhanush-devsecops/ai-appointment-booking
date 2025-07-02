@@ -1,25 +1,27 @@
 import os
 import streamlit as st
 from groq import Groq
-from dotenv import load_dotenv
 
-# Load API key from .env (optional but good practice)
-load_dotenv()
+# ✅ Get API key from Streamlit secrets (set in deployment settings)
+api_key = os.environ.get("GROQ_API_KEY")
 
-# You can also directly use your API key here
-api_key = os.getenv("GROQ_API_KEY") 
-# Initialize GROQ client
+# ✅ Stop if API key is missing
+if not api_key:
+    st.error("❌ GROQ_API_KEY not set. Please set it in Streamlit secrets.")
+    st.stop()
+
+# ✅ Initialize Groq client
 client = Groq(api_key=api_key)
 
-# Streamlit UI
+# ✅ Streamlit UI
 st.set_page_config(page_title="🧠 AI Appointment Booking Assistant", page_icon="📅")
 st.title("📅 AI Appointment Booking Assistant")
-st.write("Book appointments using natural language with GROQ Mixtral AI.")
+st.write("Book appointments using natural language with GROQ's LLaMA3 model.")
 
-# User input
+# ✅ Input from user
 prompt = st.text_input("🗓️ What would you like to book? (e.g., 'Book meeting with John on July 5 at 10 AM')")
 
-# Response
+# ✅ Handle response
 if prompt:
     with st.spinner("Thinking..."):
         try:
